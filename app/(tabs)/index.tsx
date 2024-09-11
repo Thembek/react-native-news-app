@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar';
 import BreakingNews from '@/components/BreakingNews';
 import Categories from '@/components/Categories';
 import NewsList from '@/components/NewsList';
+import Loading from '@/components/Loading';
 import axios from 'axios';
 import { NewsDataType } from '@/types';
 
@@ -37,12 +38,16 @@ const Page = (props: Props) => {
     }
   }
 
-  const getNews = async () => {
+  const getNews = async (category:string = '') => {
     try {
-      const URL = `https://newsdata.io/api/1/news?apikey=${process.env.EXPO_PUBLIC_API_KEY}&language=en&image=1&removeduplicate=1&size=10`;
+      let categoryString = '';
+      if(category.length !== 0){
+        categoryString = `&category=${category}`
+      }
+      const URL = `https://newsdata.io/api/1/news?apikey=${process.env.EXPO_PUBLIC_API_KEY}&language=en&image=1&removeduplicate=1&size=10${categoryString}`;
       const response = await axios .get(URL);
 
-      console.log("News data: ", response.data);
+      //console.log("News data: ", response.data);
       if(response && response.data){
         setNews(response.data.results);
         setIsLoading(false)
@@ -54,6 +59,8 @@ const Page = (props: Props) => {
 
   const onCatChange = (category: string) => {
     console.log('Category: ', category);
+    setNews([]);
+    getNews(category);
   }
 
   return (
@@ -61,7 +68,7 @@ const Page = (props: Props) => {
       <Header />
       <SearchBar />
       {isLoading ? (
-        <ActivityIndicator size={"large"} />
+        <Loading size={'large'}/>
       ): (
         <BreakingNews newsList={breakingNews} />
       )}
