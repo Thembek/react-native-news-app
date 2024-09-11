@@ -1,9 +1,11 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator,ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import BreakingNews from '@/components/BreakingNews';
+import Categories from '@/components/Categories';
+import NewsList from '@/components/NewsList';
 import axios from 'axios';
 import { NewsDataType } from '@/types';
 
@@ -12,15 +14,17 @@ type Props = {}
 const Page = (props: Props) => {
   const {top: safeTop} = useSafeAreaInsets();
   const [breakingNews, setBreakingNews] = useState<NewsDataType[]>([]);
+  const [news, setNews] = useState<NewsDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getBreakingNews()
+    getBreakingNews();
+    getNews();
   }, []);
 
   const getBreakingNews = async () => {
     try{
-      const URL = `https://newsdata.io/api/1/news?apikey=${process.env.EXPO_PUBLIC_API_KEY}&country=za&language=en&image=1&removeduplicate=1&size=5`;
+      const URL = `https://newsdata.io/api/1/news?apikey=${process.env.EXPO_PUBLIC_API_KEY}&language=en&image=1&removeduplicate=1&size=5`;
       const response = await axios .get(URL);
 
       console.log(response.data);
@@ -33,8 +37,27 @@ const Page = (props: Props) => {
     }
   }
 
+  const getNews = async () => {
+    try {
+      const URL = `https://newsdata.io/api/1/news?apikey=${process.env.EXPO_PUBLIC_API_KEY}&language=en&image=1&removeduplicate=1&size=10`;
+      const response = await axios .get(URL);
+
+      console.log("News data: ", response.data);
+      if(response && response.data){
+        setNews(response.data.results);
+        setIsLoading(false)
+      }
+    } catch (err: any){
+      console.log("Error Message: ", err.message)
+    }
+  }
+
+  const onCatChange = (category: string) => {
+    console.log('Category: ', category);
+  }
+
   return (
-    <View style={styles.container, { paddingTop: safeTop }}>
+    <ScrollView style={styles.container, { paddingTop: safeTop }}>
       <Header />
       <SearchBar />
       {isLoading ? (
@@ -42,7 +65,9 @@ const Page = (props: Props) => {
       ): (
         <BreakingNews newsList={breakingNews} />
       )}
-    </View>
+      <Categories onCategoryChanged={onCatChange}/>
+      <NewsList newsList={news}/>
+    </ScrollView>
   )
 }
 
