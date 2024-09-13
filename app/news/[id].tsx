@@ -6,6 +6,7 @@ import axios from 'axios';
 import { NewsDataType } from '@/types';
 import Loading from '@/components/Loading';
 import { Colors } from '@/constants/Colors';
+import Moment from 'moment';
 
 type Props = {}
 
@@ -54,7 +55,7 @@ const NewsDetails = (props: Props) => {
                 <ScrollView contentContainerStyle={styles.contentContainer} style={styles.container}>
                     <Text style={styles.title}>{news[0].title}</Text>
                     <View style={styles.newsInfoWrapper}>
-                        <Text style={styles.newsInfo}>{news[0].pubDate}</Text>
+                        <Text style={styles.newsInfo}>{Moment(news[0].pubDate).format('MMMM DD, hh:mm a')}</Text>
                         <Text style={styles.newsInfo}>{news[0].source_name}</Text>
                     </View>
                     <Image source={{ uri: news[0].image_url}} style={styles.newsImg}/>
