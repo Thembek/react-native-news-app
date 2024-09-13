@@ -18,17 +18,7 @@ const NewsList = ({newsList}: Props) => {
                 newsList.map((item, index) => (
                     <Link href={`/news/${item.article_id}`} asChild>
                         <TouchableOpacity>
-                            <View key={index} style={styles.itemContainer}>
-                                <Image source={{ uri: item.image_url }} style={styles.itemImg} />
-                                <View style={styles.itemInfo}>
-                                    <Text style={styles.itemCategory}>{item.category}</Text>
-                                    <Text style={styles.itemTitle}>{item.title}</Text>
-                                    <View style={styles.itemSourceInfo}>
-                                        <Image source={{ uri: item.source_icon }} style={styles.itemSourceImg} />
-                                        <Text style={styles.itemSourceName}>{item.source_name}</Text>
-                                    </View>
-                                </View>
-                            </View>
+                            <NewsItem item={item}/>
                         </TouchableOpacity>
                     </Link>
                 ))
@@ -38,6 +28,22 @@ const NewsList = ({newsList}: Props) => {
 }
 
 export default NewsList;
+
+export const NewsItem = ({item}: {item: NewsDataType }) => {
+    return(
+        <View style={styles.itemContainer}>
+            <Image source={{ uri: item.image_url }} style={styles.itemImg} />
+            <View style={styles.itemInfo}>
+                <Text style={styles.itemCategory}>{item.category}</Text>
+                <Text style={styles.itemTitle}>{item.title}</Text>
+                <View style={styles.itemSourceInfo}>
+                    <Image source={{ uri: item.source_icon }} style={styles.itemSourceImg} />
+                    <Text style={styles.itemSourceName}>{item.source_name}</Text>
+                 </View>
+            </View>
+        </View>
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
